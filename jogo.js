@@ -1,21 +1,47 @@
+
 const readline = require('readline');
 
+const MINIMUM = 1;
+const MAXIMUM = 10;
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-const numeroAleatorio = Math.floor(Math.random() * 10) + 1;
+const randomNumber = Math.floor(Math.random() * (MAXIMUM - MINIMUM + 1)) + MINIMUM;
 
+let attempts = 0;
+
+console.log('Jogo de adivinhação!');
+console.log(`Tente adivinhar o número secreto de ${MINIMUM} a ${MAXIMUM}.`);
+
+rl.setPrompt('Digite seu palpite: ');
 rl.prompt();
 
-rl.on('line', (resposta) => {
-    const numeroTentativa = parseInt(resposta);
+rl.on('line', (answer) => {
+    const guess = Number(answer.trim());
 
-    if (numeroTentativa === numeroAleatorio) {
-        console.log('Muito Bem! Você escolheu o número correto:', numeroAleatorio);
+    if (!Number.isInteger(guess) || guess < MINIMUM || guess > MAXIMUM) {
+        console.log(`Entrada inválida! Digite um número inteiro de ${MINIMUM} a ${MAXIMUM}.`);
+        rl.prompt();
     } else {
-        console.log('Número errado! Tente novamente.');
+        attempts++;
+
+        if (guess === randomNumber) {
+            console.log('Muito bem! Você acertou o número:', randomNumber);
+            console.log('Número de tentativas:', attempts);
+            rl.close();
+        } else {
+            console.log('Número errado! Tente novamente.');
+
+            if (guess < randomNumber) {
+                console.log('Dica: o número secreto é maior.');
+            } else {
+                console.log('Dica: o número secreto é menor.');
+            }
+
+            rl.prompt();
+        }
     }
 });
